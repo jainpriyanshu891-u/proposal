@@ -8,7 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 
 <style>
-:root{--bg1:#ff9a9e;--bg2:#fecfef;--accent:#ff3d6e}
+:root{
+  --bg1:#ff9a9e; 
+  --bg2:#fecfef; 
+  --accent:#ff5d7a;
+}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
@@ -18,87 +22,131 @@ body{
   overflow:hidden;
 }
 
-/* floating hearts */
-.hearts{position:fixed;inset:0;pointer-events:none}
+/* ===== BACKGROUND HEARTS (NON-CLICKABLE) ===== */
+.hearts{
+  position:fixed; inset:0;
+  pointer-events:none; z-index:1;
+}
 .heart{
-  position:absolute;bottom:-10vh;width:20px;height:20px;
-  background:var(--accent);transform:rotate(45deg);
-  animation:float 7s linear infinite;opacity:.85
+  position:absolute; bottom:-40px;
+  font-size:22px;
+  animation:float 7s linear infinite;
 }
-.heart:before,.heart:after{
-  content:"";position:absolute;width:20px;height:20px;
-  background:inherit;border-radius:50%
+@keyframes float{
+  from{transform:translateY(0);opacity:1}
+  to{transform:translateY(-120vh);opacity:0}
 }
-.heart:before{top:-10px}
-.heart:after{left:10px}
-@keyframes float{to{transform:translateY(-120vh) rotate(45deg);opacity:0}}
 
-/* card */
+/* ===== MAIN CARD ===== */
 .card{
+  width:min(880px,92vw);
+  padding:36px;
+  border-radius:22px;
   background:rgba(255,255,255,.15);
   backdrop-filter:blur(10px);
-  padding:40px;border-radius:22px;
   text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
-  width:min(880px,92vw);
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  position:relative;
+  z-index:10;
 }
+
 h1{
   font-family:'Great Vibes',cursive;
-  font-size:60px;color:#fff;margin:0
+  font-size:60px;
+  color:#fff;
+  margin:0;
 }
-.name{color:#fff;font-size:30px;font-weight:600}
-.quote{color:#fff;margin:18px}
+.name{
+  color:#fff;
+  font-size:28px;
+  font-weight:600;
+}
+.quote{
+  color:#fff;
+  margin:18px 0 26px;
+}
 
-/* proposal */
+/* ===== PROPOSAL AREA ===== */
 .proposal{
   position:relative;
+  padding:24px;
+  border-radius:16px;
   background:rgba(255,255,255,.12);
-  padding:30px;border-radius:16px;
-}
-.btn{
-  border:0;border-radius:999px;
-  padding:14px 28px;
-  font-weight:700;cursor:pointer;
-}
-.yes{background:#ff4f7a;color:#fff}
-.no{
-  background:#6d5dfc;color:#fff;
-  margin-left:10px; /* YES ke paas */
+  z-index:20;
 }
 
-/* NO modal */
-.modal{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.4);
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:.3s;
+.buttons{
+  position:relative;
+  width:260px;
+  height:110px;
+  margin:0 auto;
 }
-.modal.show{opacity:1;pointer-events:auto}
-.modal-box{
+
+/* ===== BUTTONS (CLICK FIXED) ===== */
+button{
+  border:0;
+  border-radius:999px;
+  padding:14px 28px;
+  font-weight:700;
+  cursor:pointer;
+  position:absolute;
+  z-index:9999;
+  pointer-events:auto;
+}
+
+#yesBtn{
+  left:0;
+  background:#ff4f7a;
+  color:#fff;
+}
+
+#noBtn{
+  right:0;
+  background:#6d5dfc;
+  color:#fff;
+}
+
+/* ===== MODAL ===== */
+.modal-wrap{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.modal-wrap.show{display:flex}
+
+.modal{
   background:#fff;
   padding:26px 30px;
   border-radius:18px;
   text-align:center;
 }
-.modal-box h3{margin:0;color:#ff4f7a}
-.modal-box button{
+.modal button{
+  position:static;
   margin-top:14px;
-  background:#ff4f7a;color:#fff;
-  border:0;border-radius:20px;
-  padding:10px 22px;
+  background:#ff4f7a;
+  color:#fff;
 }
 
-/* YES overlay */
+/* ===== OVERLAY AFTER YES ===== */
 .overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.45);
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1200;
 }
-.overlay.show{opacity:1;pointer-events:auto}
+.overlay.show{display:flex}
+
 .celebrate{
   background:#ffd6e0;
-  padding:32px;border-radius:22px;
+  padding:32px;
+  border-radius:22px;
   text-align:center;
 }
 </style>
@@ -106,6 +154,7 @@ h1{
 
 <body>
 
+<!-- floating hearts -->
 <div class="hearts" id="hearts"></div>
 
 <main class="card">
@@ -114,14 +163,16 @@ h1{
   <p class="quote">Will you be my Valentine? 💖</p>
 
   <div class="proposal" id="box">
-    <button class="btn yes" id="yesBtn">Yes ❤️</button>
-    <button class="btn no" id="noBtn">No 😔</button>
+    <div class="buttons">
+      <button id="yesBtn">Yes ❤️</button>
+      <button id="noBtn">No 😔</button>
+    </div>
   </div>
 </main>
 
 <!-- NO modal -->
-<div class="modal" id="noModal">
-  <div class="modal-box">
+<div class="modal-wrap" id="noModal">
+  <div class="modal">
     <h3>Are you serious? 😳</h3>
     <button id="okBtn">OK</button>
   </div>
@@ -130,98 +181,84 @@ h1{
 <!-- YES overlay -->
 <div class="overlay" id="overlay">
   <div class="celebrate">
-    <h2> I LOVE YOUU💖💖</h2>
-    <p>Urvashi & Priyanshu 💖</p>
+    <h2>I LOVE YOUU </h2>
+    <p>Urvashi & Priyanshu</p>
   </div>
 </div>
 
 <audio id="bgm" src="raabta.mp3" loop></audio>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // ==== helpers ====
-  const $ = (id) => document.getElementById(id);
+document.addEventListener("DOMContentLoaded",()=>{
 
-  // ==== elements (IDs must match HTML) ====
-  const heartsEl = $("hearts");
-  const yesBtn   = $("yesBtn");
-  const noBtn    = $("noBtn");
-  const box      = $("box");
-  const modal    = $("noModal");
-  const okBtn    = $("okBtn");
-  const overlay  = $("overlay");
-  const bgm      = $("bgm");
+  /* ===== ELEMENTS ===== */
+  const hearts = document.getElementById("hearts");
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const box    = document.getElementById("box");
+  const modal  = document.getElementById("noModal");
+  const okBtn  = document.getElementById("okBtn");
+  const overlay= document.getElementById("overlay");
+  const bgm    = document.getElementById("bgm");
 
-  // If any is missing, show a small alert so you instantly know what's wrong
-  const missing = [];
-  if(!heartsEl) missing.push("hearts");
-  if(!yesBtn) missing.push("yesBtn");
-  if(!noBtn) missing.push("noBtn");
-  if(!box) missing.push("box");
-  if(!modal) missing.push("noModal");
-  if(!okBtn) missing.push("okBtn");
-  if(!overlay) missing.push("overlay");
-  if(!bgm) missing.push("bgm");
+  /* ===== HEARTS ===== */
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent="❤️";
+    h.style.left=Math.random()*100+"%";
+    hearts.appendChild(h);
+    setTimeout(()=>h.remove(),7000);
+  },700);
 
-  if (missing.length) {
-    alert("Fix IDs in HTML. Missing: " + missing.join(", "));
-    return; // stop to avoid JS crash
-  }
+  /* ===== NO BUTTON LOGIC ===== */
+  let noOnce=false;
 
-  // ==== floating hearts background ====
-  setInterval(() => {
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.style.left = Math.random() * 100 + "%";
-    heartsEl.appendChild(h);
-    setTimeout(() => h.remove(), 7000);
-  }, 600);
-
-  // ==== NO button logic: first click shows message, then moves ====
-  let noClickedOnce = false;
-
-  function moveNo() {
+  function moveNo(){
     const bw = box.offsetWidth - noBtn.offsetWidth;
     const bh = box.offsetHeight - noBtn.offsetHeight;
-
-    noBtn.style.position = "absolute";
-    noBtn.style.left = Math.max(0, Math.random() * bw) + "px";
-    noBtn.style.top  = Math.max(0, Math.random() * bh) + "px";
+    noBtn.style.left = Math.max(0,Math.random()*bw) + "px";
+    noBtn.style.top  = Math.max(0,Math.random()*bh) + "px";
   }
 
-  noBtn.addEventListener("click", (e) => {
+  noBtn.addEventListener("click",(e)=>{
     e.preventDefault();
-    if (!noClickedOnce) {
-      noClickedOnce = true;
+    if(!noOnce){
+      noOnce=true;
       modal.classList.add("show");
-    } else {
+    }else{
       moveNo();
     }
   });
 
-  okBtn.addEventListener("click", () => {
+  okBtn.addEventListener("click",()=>{
     modal.classList.remove("show");
     moveNo();
   });
 
-  // ==== YES: vibration + music + WhatsApp ====
-  yesBtn.addEventListener("click", () => {
-    if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
+  /* ===== YES BUTTON (MOBILE SAFE MUSIC) ===== */
+  yesBtn.addEventListener("click",()=>{
 
-    // Try to play music (works only after user gesture)
-    bgm.muted = false;
+    if(navigator.vibrate){
+      navigator.vibrate([100,50,150]);
+    }
+
     bgm.currentTime = 0;
-    bgm.play().catch(() => { /* if blocked, no crash */ });
+    bgm.play().catch(()=>{});
 
     overlay.classList.add("show");
 
     const msg = encodeURIComponent(
-      "I LOVE YOUU\n\nUrvashi & Priyanshu — Our forever starts now"
+      "I LOVE YOUU \n\nUrvashi & Priyanshu — Our forever starts now"
     );
     const url = "https://wa.me/917417792232?text=" + msg;
 
-    setTimeout(() => window.open(url, "_blank"), 800);
+    setTimeout(()=>window.open(url,"_blank"),800);
   });
+
 });
 </script>
+
+</body>
+</html>
 
