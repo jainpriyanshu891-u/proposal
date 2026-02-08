@@ -135,84 +135,93 @@ h1{
   </div>
 </div>
 
-<audio id="bgm" src="raabta.mpeg" loop></audio>
+<audio id="bgm" src="raabta.mp3" loop></audio>
 
 <script>
-// hearts
-const hearts=document.getElementById('hearts');
-setInterval(()=>{
-  const h=document.createElement('div');
-  h.className='heart';
-  h.style.left=Math.random()*100+'%';
-  hearts.appendChild(h);
-  setTimeout(()=>h.remove(),7000);
-},600);
+document.addEventListener("DOMContentLoaded", () => {
+  // ==== helpers ====
+  const $ = (id) => document.getElementById(id);
 
-// NO logic: message first, then move
-const noBtn=document.getElementById('noBtn');
-const box=document.getElementById('box');
-const modal=document.getElementById('noModal');
-const okBtn=document.getElementById('okBtn');
-let noClickedOnce=false;
+  // ==== elements (IDs must match HTML) ====
+  const heartsEl = $("hearts");
+  const yesBtn   = $("yesBtn");
+  const noBtn    = $("noBtn");
+  const box      = $("box");
+  const modal    = $("noModal");
+  const okBtn    = $("okBtn");
+  const overlay  = $("overlay");
+  const bgm      = $("bgm");
 
-function moveNo(){
-  const bw=box.offsetWidth-noBtn.offsetWidth;
-  const bh=box.offsetHeight-noBtn.offsetHeight;
-  noBtn.style.position="absolute";
-  noBtn.style.left=Math.random()*bw+'px';
-  noBtn.style.top=Math.random()*bh+'px';
-}
+  // If any is missing, show a small alert so you instantly know what's wrong
+  const missing = [];
+  if(!heartsEl) missing.push("hearts");
+  if(!yesBtn) missing.push("yesBtn");
+  if(!noBtn) missing.push("noBtn");
+  if(!box) missing.push("box");
+  if(!modal) missing.push("noModal");
+  if(!okBtn) missing.push("okBtn");
+  if(!overlay) missing.push("overlay");
+  if(!bgm) missing.push("bgm");
 
-noBtn.onclick=()=>{
-  if(!noClickedOnce){
-    noClickedOnce=true;
-    modal.classList.add('show');
-  }else{
-    moveNo();
+  if (missing.length) {
+    alert("Fix IDs in HTML. Missing: " + missing.join(", "));
+    return; // stop to avoid JS crash
   }
-};
 
-okBtn.onclick=()=>{
-  modal.classList.remove('show');
-  moveNo();
-};
+  // ==== floating hearts background ====
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.style.left = Math.random() * 100 + "%";
+    heartsEl.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
+  }, 600);
 
-// YES: music + vibration + direct WhatsApp (YOUR number)
-const yesBtn=document.getElementById('yesBtn');
-const overlay=document.getElementById('overlay');
-const bgm=document.getElementById('bgm');
+  // ==== NO button logic: first click shows message, then moves ====
+  let noClickedOnce = false;
 
-yesBtn.onclick = () => {
-  // vibration
-  if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
+  function moveNo() {
+    const bw = box.offsetWidth - noBtn.offsetWidth;
+    const bh = box.offsetHeight - noBtn.offsetHeight;
 
-  // 🔥 FORCE PLAY MUSIC (mobile-safe)
-  bgm.muted = false;
-  bgm.currentTime = 0;
-  bgm.play().then(() => {
-    console.log("Music started");
-  }).catch(() => {
-    console.log("Autoplay blocked");
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.max(0, Math.random() * bw) + "px";
+    noBtn.style.top  = Math.max(0, Math.random() * bh) + "px";
+  }
+
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!noClickedOnce) {
+      noClickedOnce = true;
+      modal.classList.add("show");
+    } else {
+      moveNo();
+    }
   });
 
-  overlay.classList.add('show');
+  okBtn.addEventListener("click", () => {
+    modal.classList.remove("show");
+    moveNo();
+  });
 
-  const msg = encodeURIComponent(
-    "She said YES!\n\nUrvashi & Priyansh — Our forever starts now"
-  );
-  const url = "https://wa.me/917417792232?text=" + msg;
+  // ==== YES: vibration + music + WhatsApp ====
+  yesBtn.addEventListener("click", () => {
+    if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
 
-  setTimeout(() => window.open(url, "_blank"), 800);
-};
+    // Try to play music (works only after user gesture)
+    bgm.muted = false;
+    bgm.currentTime = 0;
+    bgm.play().catch(() => { /* if blocked, no crash */ });
 
-  const msg = encodeURIComponent(
-  "She said YES!\n\nUrvashi & Priyanshu — Our forever starts now"
-);
-  const url = "https://wa.me/917417792232?text=" + msg;
-  setTimeout(()=>window.open(url,"_blank"),800);
-};
+    overlay.classList.add("show");
+
+    const msg = encodeURIComponent(
+      "I LOVE YOUU\n\nUrvashi & Priyanshu — Our forever starts now"
+    );
+    const url = "https://wa.me/917417792232?text=" + msg;
+
+    setTimeout(() => window.open(url, "_blank"), 800);
+  });
+});
 </script>
 
-</body>
-
-</html>
