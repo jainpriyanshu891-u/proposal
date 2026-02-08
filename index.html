@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Urvashi — Will You Be Mine?</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+:root{--bg1:#ff9a9e;--bg2:#fecfef;--accent:#ff3d6e}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* floating hearts */
+.hearts{position:fixed;inset:0;pointer-events:none}
+.heart{
+  position:absolute;bottom:-10vh;width:20px;height:20px;
+  background:var(--accent);transform:rotate(45deg);
+  animation:float 7s linear infinite;opacity:.85
+}
+.heart:before,.heart:after{
+  content:"";position:absolute;width:20px;height:20px;
+  background:inherit;border-radius:50%
+}
+.heart:before{top:-10px}
+.heart:after{left:10px}
+@keyframes float{to{transform:translateY(-120vh) rotate(45deg);opacity:0}}
+
+/* card */
+.card{
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(10px);
+  padding:40px;border-radius:22px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  width:min(880px,92vw);
+}
+h1{
+  font-family:'Great Vibes',cursive;
+  font-size:60px;color:#fff;margin:0
+}
+.name{color:#fff;font-size:30px;font-weight:600}
+.quote{color:#fff;margin:18px}
+
+/* proposal */
+.proposal{
+  position:relative;
+  background:rgba(255,255,255,.12);
+  padding:30px;border-radius:16px;
+}
+.btn{
+  border:0;border-radius:999px;
+  padding:14px 28px;
+  font-weight:700;cursor:pointer;
+}
+.yes{background:#ff4f7a;color:#fff}
+.no{
+  background:#6d5dfc;color:#fff;
+  margin-left:10px; /* YES ke paas */
+}
+
+/* NO modal */
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:.3s;
+}
+.modal.show{opacity:1;pointer-events:auto}
+.modal-box{
+  background:#fff;
+  padding:26px 30px;
+  border-radius:18px;
+  text-align:center;
+}
+.modal-box h3{margin:0;color:#ff4f7a}
+.modal-box button{
+  margin-top:14px;
+  background:#ff4f7a;color:#fff;
+  border:0;border-radius:20px;
+  padding:10px 22px;
+}
+
+/* YES overlay */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+}
+.overlay.show{opacity:1;pointer-events:auto}
+.celebrate{
+  background:#ffd6e0;
+  padding:32px;border-radius:22px;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<main class="card">
+  <h1>Urvashi</h1>
+  <div class="name">My Love, My Forever</div>
+  <p class="quote">Will you be my Valentine? 💖</p>
+
+  <div class="proposal" id="box">
+    <button class="btn yes" id="yesBtn">Yes ❤️</button>
+    <button class="btn no" id="noBtn">No 😔</button>
+  </div>
+</main>
+
+<!-- NO modal -->
+<div class="modal" id="noModal">
+  <div class="modal-box">
+    <h3>Are you serious? 😳</h3>
+    <button id="okBtn">OK</button>
+  </div>
+</div>
+
+<!-- YES overlay -->
+<div class="overlay" id="overlay">
+  <div class="celebrate">
+    <h2> I LOVE YOUU💖💖</h2>
+    <p>Urvashi & Priyansh 💖</p>
+  </div>
+</div>
+
+<audio id="bgm" src="raabta.mpeg" loop></audio>
+
+<script>
+// hearts
+const hearts=document.getElementById('hearts');
+setInterval(()=>{
+  const h=document.createElement('div');
+  h.className='heart';
+  h.style.left=Math.random()*100+'%';
+  hearts.appendChild(h);
+  setTimeout(()=>h.remove(),7000);
+},600);
+
+// NO logic: message first, then move
+const noBtn=document.getElementById('noBtn');
+const box=document.getElementById('box');
+const modal=document.getElementById('noModal');
+const okBtn=document.getElementById('okBtn');
+let noClickedOnce=false;
+
+function moveNo(){
+  const bw=box.offsetWidth-noBtn.offsetWidth;
+  const bh=box.offsetHeight-noBtn.offsetHeight;
+  noBtn.style.position="absolute";
+  noBtn.style.left=Math.random()*bw+'px';
+  noBtn.style.top=Math.random()*bh+'px';
+}
+
+noBtn.onclick=()=>{
+  if(!noClickedOnce){
+    noClickedOnce=true;
+    modal.classList.add('show');
+  }else{
+    moveNo();
+  }
+};
+
+okBtn.onclick=()=>{
+  modal.classList.remove('show');
+  moveNo();
+};
+
+// YES: music + vibration + direct WhatsApp (YOUR number)
+const yesBtn=document.getElementById('yesBtn');
+const overlay=document.getElementById('overlay');
+const bgm=document.getElementById('bgm');
+
+yesBtn.onclick=async()=>{
+  if(navigator.vibrate) navigator.vibrate([100,50,150]);
+  try{await bgm.play()}catch(e){}
+  overlay.classList.add('show');
+
+  const msg = encodeURIComponent(
+  "She said YES!\n\nUrvashi & Priyansh — Our forever starts now"
+);
+  const url = "https://wa.me/917417792232?text=" + msg;
+  setTimeout(()=>window.open(url,"_blank"),800);
+};
+</script>
+
+</body>
+</html>
