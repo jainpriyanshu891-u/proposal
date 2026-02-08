@@ -131,7 +131,7 @@ h1{
 <div class="overlay" id="overlay">
   <div class="celebrate">
     <h2> I LOVE YOUU💖💖</h2>
-    <p>Urvashi & Priyansh 💖</p>
+    <p>Urvashi & Priyanshu 💖</p>
   </div>
 </div>
 
@@ -182,13 +182,31 @@ const yesBtn=document.getElementById('yesBtn');
 const overlay=document.getElementById('overlay');
 const bgm=document.getElementById('bgm');
 
-yesBtn.onclick=async()=>{
-  if(navigator.vibrate) navigator.vibrate([100,50,150]);
-  try{await bgm.play()}catch(e){}
+yesBtn.onclick = () => {
+  // vibration
+  if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
+
+  // 🔥 FORCE PLAY MUSIC (mobile-safe)
+  bgm.muted = false;
+  bgm.currentTime = 0;
+  bgm.play().then(() => {
+    console.log("Music started");
+  }).catch(() => {
+    console.log("Autoplay blocked");
+  });
+
   overlay.classList.add('show');
 
   const msg = encodeURIComponent(
-  "She said YES!\n\nUrvashi & Priyansh — Our forever starts now"
+    "She said YES!\n\nUrvashi & Priyansh — Our forever starts now"
+  );
+  const url = "https://wa.me/917417792232?text=" + msg;
+
+  setTimeout(() => window.open(url, "_blank"), 800);
+};
+
+  const msg = encodeURIComponent(
+  "She said YES!\n\nUrvashi & Priyanshu — Our forever starts now"
 );
   const url = "https://wa.me/917417792232?text=" + msg;
   setTimeout(()=>window.open(url,"_blank"),800);
@@ -196,4 +214,5 @@ yesBtn.onclick=async()=>{
 </script>
 
 </body>
+
 </html>
